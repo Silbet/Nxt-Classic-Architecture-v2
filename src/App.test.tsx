@@ -7,7 +7,7 @@ const mockFetchTracks = vi.fn();
 const mockResolveMissingCovers = vi.fn((tracks) => Promise.resolve(tracks));
 vi.mock('./lib/supabase', () => ({
   fetchTracks: (...args: unknown[]) => mockFetchTracks(...args),
-  resolveMissingCovers: (...args: unknown[]) => mockResolveMissingCovers(...args),
+  resolveMissingCovers: (tracks: unknown) => mockResolveMissingCovers(tracks),
 }));
 
 const sampleTracks = [
