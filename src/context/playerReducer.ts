@@ -23,7 +23,7 @@ export function shuffleArray<T>(arr: T[]): T[] {
   return result;
 }
 
-function sortByUploadedAt(tracks: Track[], order: 'desc' | 'asc'): Track[] {
+function sortTracks(tracks: Track[], order: 'desc' | 'asc'): Track[] {
   return [...tracks].sort((a, b) => {
     const recordedDiff = new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime();
     if (recordedDiff !== 0) return order === 'desc' ? -recordedDiff : recordedDiff;
@@ -41,7 +41,7 @@ export function playerReducer(state: PlayerState, action: PlayerAction): PlayerS
   switch (action.type) {
     case 'LOAD_TRACKS': {
       const tracks = action.payload;
-      const queue = sortByUploadedAt(tracks, state.sortOrder);
+      const queue = sortTracks(tracks, state.sortOrder);
       return { ...state, tracks, queue, isLoading: false, error: null };
     }
 
@@ -84,7 +84,7 @@ export function playerReducer(state: PlayerState, action: PlayerAction): PlayerS
       const currentTrack =
         state.currentIndex >= 0 ? state.queue[state.currentIndex] : undefined;
 
-      const sorted = sortByUploadedAt(state.tracks, newOrder);
+      const sorted = sortTracks(state.tracks, newOrder);
       const newIndex = findTrackIndexInQueue(sorted, currentTrack);
       return { ...state, sortOrder: newOrder, queue: sorted, currentIndex: newIndex };
     }
