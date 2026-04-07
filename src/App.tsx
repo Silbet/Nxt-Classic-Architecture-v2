@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { PlayerProvider, usePlayer } from './context/PlayerContext';
 import FixedPlayer from './components/FixedPlayer';
 import TrackList from './components/TrackList';
-import { fetchTracks, resolveMissingCovers } from './lib/supabase';
+import { fetchTracks } from './lib/supabase';
 
 function AppContent() {
   const { dispatch } = usePlayer();
@@ -16,9 +16,7 @@ function AppContent() {
       try {
         const tracks = await fetchTracks();
         if (!cancelled) {
-          // cover_url 없는 곡은 iTunes API로 자동 검색 후 DB 저장
-          const tracksWithCovers = await resolveMissingCovers(tracks);
-          dispatch({ type: 'LOAD_TRACKS', payload: tracksWithCovers });
+          dispatch({ type: 'LOAD_TRACKS', payload: tracks });
         }
       } catch (err) {
         if (!cancelled) {

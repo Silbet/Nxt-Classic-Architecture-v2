@@ -2,12 +2,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import App from './App';
 
-// Mock fetchTracks and resolveMissingCovers
+// Mock fetchTracks
 const mockFetchTracks = vi.fn();
-const mockResolveMissingCovers = vi.fn((tracks) => Promise.resolve(tracks));
 vi.mock('./lib/supabase', () => ({
   fetchTracks: (...args: unknown[]) => mockFetchTracks(...args),
-  resolveMissingCovers: (tracks: unknown) => mockResolveMissingCovers(tracks),
 }));
 
 const sampleTracks = [
