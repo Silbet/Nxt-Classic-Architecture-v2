@@ -78,7 +78,7 @@ export default function FixedPlayer() {
       ) : (
         /* Placeholder when no track selected */
         <div className="px-3 py-4 text-center text-text-muted max-w-4xl mx-auto">
-          곡을 선택해주세요
+          선택된 곡 없음
         </div>
       )}
     </header>
