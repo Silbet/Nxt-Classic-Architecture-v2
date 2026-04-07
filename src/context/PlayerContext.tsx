@@ -43,20 +43,12 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   const handleEnded = useCallback(() => {
     if (state.autoplay) {
-      // If shuffle is ON and we're at the last track, reshuffle and restart
-      if (state.shuffle && state.currentIndex === state.queue.length - 1) {
-        // Toggle shuffle off then on to generate a fresh shuffled queue
-        dispatch({ type: 'TOGGLE_SHUFFLE' });
-        dispatch({ type: 'TOGGLE_SHUFFLE' });
-        dispatch({ type: 'SELECT_TRACK', payload: 0 });
-      } else {
-        dispatch({ type: 'NEXT' });
-        dispatch({ type: 'PLAY' });
-      }
+      dispatch({ type: 'NEXT' });
+      dispatch({ type: 'PLAY' });
     } else {
       dispatch({ type: 'PAUSE' });
     }
-  }, [state.autoplay, state.shuffle, state.currentIndex, state.queue.length]);
+  }, [state.autoplay]);
 
   // Attach/detach audio event listeners
   useEffect(() => {

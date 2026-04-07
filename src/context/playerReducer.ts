@@ -6,7 +6,6 @@ export const initialState: PlayerState = {
   currentIndex: -1,
   isPlaying: false,
   autoplay: true,
-  shuffle: false,
   sortOrder: 'desc',
   currentTime: 0,
   duration: 0,
@@ -80,33 +79,10 @@ export function playerReducer(state: PlayerState, action: PlayerAction): PlayerS
     case 'SEEK':
       return { ...state, currentTime: action.payload };
 
-    case 'TOGGLE_AUTOPLAY':
-      return { ...state, autoplay: !state.autoplay };
-
-    case 'TOGGLE_SHUFFLE': {
-      const newShuffle = !state.shuffle;
-      const currentTrack =
-        state.currentIndex >= 0 ? state.queue[state.currentIndex] : undefined;
-
-      if (newShuffle) {
-        const shuffled = shuffleArray(state.tracks);
-        const newIndex = findTrackIndexInQueue(shuffled, currentTrack);
-        return { ...state, shuffle: newShuffle, queue: shuffled, currentIndex: newIndex };
-      } else {
-        const sorted = sortByUploadedAt(state.tracks, state.sortOrder);
-        const newIndex = findTrackIndexInQueue(sorted, currentTrack);
-        return { ...state, shuffle: newShuffle, queue: sorted, currentIndex: newIndex };
-      }
-    }
-
     case 'TOGGLE_SORT': {
       const newOrder = state.sortOrder === 'desc' ? 'asc' : 'desc';
       const currentTrack =
         state.currentIndex >= 0 ? state.queue[state.currentIndex] : undefined;
-
-      if (state.shuffle) {
-        return { ...state, sortOrder: newOrder };
-      }
 
       const sorted = sortByUploadedAt(state.tracks, newOrder);
       const newIndex = findTrackIndexInQueue(sorted, currentTrack);

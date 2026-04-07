@@ -26,7 +26,6 @@ export interface PlayerState {
   currentIndex: number;
   isPlaying: boolean;
   autoplay: boolean;
-  shuffle: boolean;
   sortOrder: 'desc' | 'asc';
   currentTime: number;
   duration: number;
@@ -43,8 +42,6 @@ export type PlayerAction =
   | { type: 'NEXT' }
   | { type: 'PREV' }
   | { type: 'SEEK'; payload: number }
-  | { type: 'TOGGLE_AUTOPLAY' }
-  | { type: 'TOGGLE_SHUFFLE' }
   | { type: 'TOGGLE_SORT' }
   | { type: 'SET_TIME'; payload: number }
   | { type: 'SET_DURATION'; payload: number }

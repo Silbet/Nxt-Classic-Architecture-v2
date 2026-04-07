@@ -49,61 +49,30 @@ export default function FixedPlayer() {
             onSeek={handleSeek}
           />
 
-          {/* Controls + Toggles */}
-          <div className="flex items-center justify-between">
-            {/* Toggle: Autoplay */}
+          {/* Controls */}
+          <div className="flex items-center justify-center gap-6">
             <button
-              onClick={() => dispatch({ type: 'TOGGLE_AUTOPLAY' })}
-              className={`text-lg p-1 rounded transition-colors ${
-                state.autoplay
-                  ? 'text-accent hover:text-accent-hover'
-                  : 'text-text-muted hover:text-text-secondary'
-              }`}
-              aria-label={`자동재생 ${state.autoplay ? 'ON' : 'OFF'}`}
-              title={`자동재생 ${state.autoplay ? 'ON' : 'OFF'}`}
+              onClick={() => dispatch({ type: 'PREV' })}
+              className="text-xl text-text-secondary hover:text-text-primary transition-colors"
+              aria-label="이전 곡"
             >
-              🔁
+              ⏮
             </button>
-
-            {/* Playback Controls */}
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => dispatch({ type: 'PREV' })}
-                className="text-xl text-text-secondary hover:text-text-primary transition-colors"
-                aria-label="이전 곡"
-              >
-                ⏮
-              </button>
-              <button
-                onClick={() =>
-                  dispatch({ type: state.isPlaying ? 'PAUSE' : 'PLAY' })
-                }
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-text-primary text-bg-primary text-lg hover:scale-105 transition-transform"
-                aria-label={state.isPlaying ? '일시정지' : '재생'}
-              >
-                {state.isPlaying ? '⏸' : '▶'}
-              </button>
-              <button
-                onClick={() => dispatch({ type: 'NEXT' })}
-                className="text-xl text-text-secondary hover:text-text-primary transition-colors"
-                aria-label="다음 곡"
-              >
-                ⏭
-              </button>
-            </div>
-
-            {/* Toggle: Shuffle */}
             <button
-              onClick={() => dispatch({ type: 'TOGGLE_SHUFFLE' })}
-              className={`text-lg p-1 rounded transition-colors ${
-                state.shuffle
-                  ? 'text-accent hover:text-accent-hover'
-                  : 'text-text-muted hover:text-text-secondary'
-              }`}
-              aria-label={`셔플 ${state.shuffle ? 'ON' : 'OFF'}`}
-              title={`셔플 ${state.shuffle ? 'ON' : 'OFF'}`}
+              onClick={() =>
+                dispatch({ type: state.isPlaying ? 'PAUSE' : 'PLAY' })
+              }
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-text-primary text-bg-primary text-lg hover:scale-105 transition-transform"
+              aria-label={state.isPlaying ? '일시정지' : '재생'}
             >
-              🔀
+              {state.isPlaying ? '⏸' : '▶'}
+            </button>
+            <button
+              onClick={() => dispatch({ type: 'NEXT' })}
+              className="text-xl text-text-secondary hover:text-text-primary transition-colors"
+              aria-label="다음 곡"
+            >
+              ⏭
             </button>
           </div>
         </div>
