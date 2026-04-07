@@ -97,10 +97,6 @@ export default function TrackItem({ track, isActive, onSelect }: TrackItemProps)
               {names.join(', ')}
             </p>
           ))}
-          <p className="text-xs text-text-secondary">
-            <span className="text-text-muted">녹음: </span>
-            {track.recordedAt}
-          </p>
         </div>
       )}
     </li>
