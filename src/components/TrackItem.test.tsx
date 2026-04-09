@@ -19,86 +19,65 @@ const mockTrack: Track = {
   ],
 };
 
+const defaultProps = {
+  track: mockTrack,
+  index: 0,
+  isActive: false as const,
+  expanded: false,
+  onSelect: vi.fn(),
+  onToggleExpand: vi.fn(),
+};
+
 describe('TrackItem', () => {
-  it('renders title, artist, album, and duration', () => {
-    render(
-      <TrackItem track={mockTrack} index={0} isActive={false} onSelect={vi.fn()} />
-    );
+  it('renders title, artist, album', () => {
+    render(<TrackItem {...defaultProps} />);
     expect(screen.getByText('Test Song')).toBeInTheDocument();
     expect(screen.getByText('Test Artist · Test Album')).toBeInTheDocument();
-    expect(screen.getByText('3:05')).toBeInTheDocument();
   });
 
   it('renders cover image', () => {
-    render(
-      <TrackItem track={mockTrack} index={0} isActive={false} onSelect={vi.fn()} />
-    );
+    render(<TrackItem {...defaultProps} />);
     const img = screen.getByAltText('Test Album 커버');
     expect(img).toHaveAttribute('src', 'https://example.com/cover.jpg');
   });
 
-  it('does not show members and recorded date by default', () => {
-    render(
-      <TrackItem track={mockTrack} index={0} isActive={false} onSelect={vi.fn()} />
-    );
+  it('does not show members by default (expanded=false)', () => {
+    render(<TrackItem {...defaultProps} />);
     expect(screen.queryByText(/홍길동/)).not.toBeInTheDocument();
-    expect(screen.queryByText('2024-01-15')).not.toBeInTheDocument();
   });
 
-  it('expands to show members and recorded date on click', () => {
-    render(
-      <TrackItem track={mockTrack} index={0} isActive={false} onSelect={vi.fn()} />
-    );
+  it('shows members when expanded=true', () => {
+    render(<TrackItem {...defaultProps} expanded={true} />);
+    expect(screen.getByText(/홍길동/)).toBeInTheDocument();
+  });
+
+  it('calls onToggleExpand when triangle button is clicked', () => {
+    const onToggleExpand = vi.fn();
+    render(<TrackItem {...defaultProps} onToggleExpand={onToggleExpand} />);
     const expandBtn = screen.getByRole('button', { name: /상세정보 펼치기/ });
     fireEvent.click(expandBtn);
-    expect(screen.getByText(/홍길동\(기타\)/)).toBeInTheDocument();
-    expect(screen.getByText('2024-01-15')).toBeInTheDocument();
-  });
-
-  it('collapses on second click', () => {
-    render(
-      <TrackItem track={mockTrack} index={0} isActive={false} onSelect={vi.fn()} />
-    );
-    const expandBtn = screen.getByRole('button', { name: /상세정보/ });
-    fireEvent.click(expandBtn);
-    expect(screen.getByText(/홍길동/)).toBeInTheDocument();
-    fireEvent.click(expandBtn);
-    expect(screen.queryByText(/홍길동/)).not.toBeInTheDocument();
+    expect(onToggleExpand).toHaveBeenCalledOnce();
   });
 
   it('calls onSelect when play button is clicked', () => {
     const onSelect = vi.fn();
-    render(
-      <TrackItem track={mockTrack} index={0} isActive={false} onSelect={onSelect} />
-    );
+    render(<TrackItem {...defaultProps} onSelect={onSelect} />);
     const playBtn = screen.getByRole('button', { name: /재생/ });
     fireEvent.click(playBtn);
     expect(onSelect).toHaveBeenCalledOnce();
   });
 
-  it('does not call onSelect when expand area is clicked', () => {
+  it('does not call onSelect when expand button is clicked', () => {
     const onSelect = vi.fn();
-    render(
-      <TrackItem track={mockTrack} index={0} isActive={false} onSelect={onSelect} />
-    );
+    render(<TrackItem {...defaultProps} onSelect={onSelect} />);
     const expandBtn = screen.getByRole('button', { name: /상세정보/ });
     fireEvent.click(expandBtn);
     expect(onSelect).not.toHaveBeenCalled();
   });
 
   it('applies highlight styling when isActive is true', () => {
-    const { container } = render(
-      <TrackItem track={mockTrack} index={0} isActive={true} onSelect={vi.fn()} />
-    );
+    const { container } = render(<TrackItem {...defaultProps} isActive={true} />);
     const li = container.querySelector('li');
     expect(li?.className).toContain('bg-bg-tertiary');
-  });
-
-  it('formats duration as mm:ss', () => {
-    const shortTrack = { ...mockTrack, duration: 62 };
-    render(
-      <TrackItem track={shortTrack} index={0} isActive={false} onSelect={vi.fn()} />
-    );
-    expect(screen.getByText('1:02')).toBeInTheDocument();
   });
 });
