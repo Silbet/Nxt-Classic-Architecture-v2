@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Track } from '../types';
 import { resolveCoverUrl } from '../utils/coverImage';
 
@@ -9,31 +9,8 @@ interface TrackItemProps {
   onSelect: () => void;
 }
 
-function formatDuration(seconds: number): string {
-  if (!seconds) return '--:--';
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
-}
-
-function useAudioDuration(audioUrl: string, dbDuration: number): number {
-  const [duration, setDuration] = useState(dbDuration);
-
-  useEffect(() => {
-    if (dbDuration > 0) return; // DB에 값 있으면 그냥 사용
-    const audio = new Audio();
-    audio.preload = 'metadata';
-    audio.onloadedmetadata = () => setDuration(audio.duration);
-    audio.src = audioUrl;
-    return () => { audio.src = ''; };
-  }, [audioUrl, dbDuration]);
-
-  return duration;
-}
-
 export default function TrackItem({ track, isActive, onSelect }: TrackItemProps) {
   const [expanded, setExpanded] = useState(false);
-  const duration = useAudioDuration(track.audioUrl, track.duration);
 
   return (
     <li
@@ -46,7 +23,7 @@ export default function TrackItem({ track, isActive, onSelect }: TrackItemProps)
         <button
           onClick={onSelect}
           className="flex-shrink-0 w-10 h-10 relative group"
-          aria-label={`${track.title} 재생`}
+          aria-label={`${track.title} 커버 이미지`}
         >
           <img
             src={resolveCoverUrl(track.coverUrl)}
@@ -62,12 +39,11 @@ export default function TrackItem({ track, isActive, onSelect }: TrackItemProps)
           </span>
         </button>
 
-        {/* Expand/collapse area */}
+        {/* Track info - click to select */}
         <button
-          onClick={() => setExpanded((prev) => !prev)}
+          onClick={onSelect}
           className="flex-1 min-w-0 text-left"
-          aria-expanded={expanded}
-          aria-label={`${track.title} 상세정보 ${expanded ? '접기' : '펼치기'}`}
+          aria-label={`${track.title} 재생`}
         >
           <p className="text-sm font-medium text-text-primary truncate">
             {track.title}
@@ -77,10 +53,23 @@ export default function TrackItem({ track, isActive, onSelect }: TrackItemProps)
           </p>
         </button>
 
-        {/* Duration */}
-        <span className="text-xs text-text-muted tabular-nums flex-shrink-0">
-          {formatDuration(duration)}
-        </span>
+        {/* Expand/collapse triangle */}
+        <button
+          onClick={() => setExpanded((prev) => !prev)}
+          className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-text-primary hover:bg-bg-hover active:bg-bg-tertiary transition-colors"
+          aria-expanded={expanded}
+          aria-label={`${track.title} 상세정보 ${expanded ? '접기' : '펼치기'}`}
+        >
+          <svg
+            width="16"
+            height="10"
+            viewBox="0 0 16 10"
+            fill="currentColor"
+            className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+          >
+            <polygon points="8,0 16,10 0,10" />
+          </svg>
+        </button>
       </div>
 
       {/* Expanded details */}
