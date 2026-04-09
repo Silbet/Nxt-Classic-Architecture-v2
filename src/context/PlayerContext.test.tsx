@@ -15,6 +15,7 @@ const sampleTrack: Track = {
   audioUrl: 'https://example.com/test.mp3',
   coverUrl: null,
   members: [{ name: 'Alice', part: 'Guitar' }],
+  playCount: 0,
 };
 
 const sampleTrack2: Track = {

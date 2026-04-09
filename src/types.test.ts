@@ -17,6 +17,7 @@ describe('mapSupabaseTrack', () => {
         { name: '홍길동', part: '기타' },
         { name: '김철수', part: '드럼' },
       ],
+      play_count: 0,
     };
 
     const track: Track = mapSupabaseTrack(row);
@@ -45,6 +46,7 @@ describe('mapSupabaseTrack', () => {
       audio_url: 'https://example.com/audio.mp3',
       cover_url: null,
       members: [],
+      play_count: 0,
     };
 
     const track = mapSupabaseTrack(row);

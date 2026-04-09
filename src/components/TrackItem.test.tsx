@@ -17,6 +17,7 @@ const mockTrack: Track = {
     { name: '홍길동', part: '기타' },
     { name: '김철수', part: '드럼' },
   ],
+  playCount: 0,
 };
 
 const defaultProps = {

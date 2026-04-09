@@ -14,6 +14,7 @@ function makeTrack(id: string, uploadedAt: string): Track {
     audioUrl: `https://example.com/${id}.mp3`,
     coverUrl: null,
     members: [{ name: 'Member', part: 'Guitar' }],
+    playCount: 0,
   };
 }
 

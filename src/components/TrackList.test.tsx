@@ -23,6 +23,7 @@ const makeTracks = (count: number) =>
     audioUrl: `https://example.com/${i + 1}.mp3`,
     coverUrl: null,
     members: [{ name: 'Member', part: 'Guitar' }],
+    playCount: 0,
   }));
 
 describe('TrackList', () => {
