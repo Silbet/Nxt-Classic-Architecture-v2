@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePlayer } from '../context/PlayerContext';
 import TrackItem from './TrackItem';
 
 export default function TrackList() {
   const { state, dispatch } = usePlayer();
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(state.currentIndex);
+
+  useEffect(() => {
+    setExpandedIndex(state.currentIndex);
+  }, [state.currentIndex]);
 
   const handleToggleExpand = (idx: number) => {
     setExpandedIndex((prev) => (prev === idx ? null : idx));
