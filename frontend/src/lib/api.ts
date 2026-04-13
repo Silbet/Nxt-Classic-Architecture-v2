@@ -11,3 +11,15 @@ export async function fetchTracks(): Promise<Track[]> {
 export async function incrementPlayCount(trackId: string): Promise<void> {
   await fetch(`${API_URL}/api/tracks/${trackId}/play`, { method: 'POST' });
 }
+
+export async function uploadTrack(formData: FormData): Promise<{ id: string }> {
+  const res = await fetch(`${API_URL}/api/tracks`, {
+    method: 'POST',
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error ?? `업로드 실패: ${res.statusText}`);
+  }
+  return res.json();
+}

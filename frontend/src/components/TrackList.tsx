@@ -1,10 +1,24 @@
 import { useState, useEffect } from 'react';
+import { Plus } from 'lucide-react';
 import { usePlayer } from '../context/PlayerContext';
 import TrackItem from './TrackItem';
+import UploadModal from './UploadModal';
+import { fetchTracks } from '../lib/api';
 
 export default function TrackList() {
   const { state, dispatch } = usePlayer();
   const [expandedIndex, setExpandedIndex] = useState<number | null>(state.currentIndex);
+  const [showUpload, setShowUpload] = useState(false);
+
+  const handleUploadSuccess = async () => {
+    setShowUpload(false);
+    try {
+      const tracks = await fetchTracks();
+      dispatch({ type: 'LOAD_TRACKS', payload: tracks });
+    } catch {
+      // 실패해도 모달은 닫힘
+    }
+  };
 
   useEffect(() => {
     setExpandedIndex(state.currentIndex);
@@ -39,13 +53,22 @@ export default function TrackList() {
         <h2 className="text-sm font-semibold text-text-secondary">
           곡 목록
         </h2>
-        <button
-          onClick={() => dispatch({ type: 'TOGGLE_SORT' })}
-          className="text-xs px-3 py-1 rounded-full border border-border text-text-secondary hover:text-text-primary hover:border-text-muted transition-colors"
-          aria-label={`정렬: ${state.sortOrder === 'desc' ? '최신순' : '오래된순'}`}
-        >
-          {state.sortOrder === 'desc' ? '최신순' : '오래된순'}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowUpload(true)}
+            className="flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-accent text-white hover:opacity-90 transition-opacity"
+            aria-label="곡 추가"
+          >
+            <Plus size={12} /> 곡 추가
+          </button>
+          <button
+            onClick={() => dispatch({ type: 'TOGGLE_SORT' })}
+            className="text-xs px-3 py-1 rounded-full border border-border text-text-secondary hover:text-text-primary hover:border-text-muted transition-colors"
+            aria-label={`정렬: ${state.sortOrder === 'desc' ? '최신순' : '오래된순'}`}
+          >
+            {state.sortOrder === 'desc' ? '최신순' : '오래된순'}
+          </button>
+        </div>
       </div>
 
       {/* Track list */}
@@ -65,6 +88,13 @@ export default function TrackList() {
             />
           ))}
         </ul>
+      )}
+
+      {showUpload && (
+        <UploadModal
+          onClose={() => setShowUpload(false)}
+          onSuccess={handleUploadSuccess}
+        />
       )}
     </section>
   );
