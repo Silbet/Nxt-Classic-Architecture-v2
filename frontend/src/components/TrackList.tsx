@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { usePlayer } from '../context/PlayerContext';
 import TrackItem from './TrackItem';
 import UploadModal from './UploadModal';
-import { fetchTracks } from '../lib/api';
+import { fetchTracks, deleteTrack } from '../lib/api';
 
 export default function TrackList() {
   const { state, dispatch } = usePlayer();
   const [expandedIndex, setExpandedIndex] = useState<number | null>(state.currentIndex);
   const [showUpload, setShowUpload] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   const handleUploadSuccess = async () => {
     setShowUpload(false);
@@ -17,6 +18,17 @@ export default function TrackList() {
       dispatch({ type: 'LOAD_TRACKS', payload: tracks });
     } catch {
       // 실패해도 모달은 닫힘
+    }
+  };
+
+  const handleDelete = async (trackId: string, trackTitle: string) => {
+    if (!confirm(`"${trackTitle}"을(를) 삭제할까요?\n이 작업은 되돌릴 수 없습니다.`)) return;
+    try {
+      await deleteTrack(trackId);
+      const tracks = await fetchTracks();
+      dispatch({ type: 'LOAD_TRACKS', payload: tracks });
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '삭제에 실패했습니다.');
     }
   };
 
@@ -55,6 +67,17 @@ export default function TrackList() {
         </h2>
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setEditMode((v) => !v)}
+            className={`flex items-center gap-1 text-xs px-3 py-1 rounded-full border transition-colors ${
+              editMode
+                ? 'bg-red-500 border-red-500 text-white hover:opacity-90'
+                : 'border-red-500 text-red-500 hover:bg-red-500 hover:text-white'
+            }`}
+            aria-label="곡 삭제 모드"
+          >
+            <Trash2 size={12} /> 곡 삭제
+          </button>
+          <button
             onClick={() => setShowUpload(true)}
             className="flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-accent text-white hover:opacity-90 transition-opacity"
             aria-label="곡 추가"
@@ -83,8 +106,10 @@ export default function TrackList() {
               index={idx}
               isActive={idx === state.currentIndex}
               expanded={expandedIndex === idx}
+              editMode={editMode}
               onSelect={() => dispatch({ type: 'SELECT_TRACK', payload: idx })}
               onToggleExpand={() => handleToggleExpand(idx)}
+              onDelete={() => handleDelete(track.id, track.title)}
             />
           ))}
         </ul>

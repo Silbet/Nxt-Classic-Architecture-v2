@@ -1,17 +1,20 @@
 import type { Track } from '../types';
 import { resolveCoverUrl } from '../utils/coverImage';
 import { formatPlayCount } from '../utils/formatPlayCount';
+import { Trash2 } from 'lucide-react';
 
 interface TrackItemProps {
   track: Track;
   index: number;
   isActive: boolean;
   expanded: boolean;
+  editMode: boolean;
   onSelect: () => void;
   onToggleExpand: () => void;
+  onDelete: () => void;
 }
 
-export default function TrackItem({ track, isActive, expanded, onSelect, onToggleExpand }: TrackItemProps) {
+export default function TrackItem({ track, isActive, expanded, editMode, onSelect, onToggleExpand, onDelete }: TrackItemProps) {
 
   return (
     <li
@@ -53,6 +56,17 @@ export default function TrackItem({ track, isActive, expanded, onSelect, onToggl
             {track.artist} · {track.album} · {formatPlayCount(track.playCount)}
           </p>
         </button>
+
+        {/* Delete button (edit mode) */}
+        {editMode && (
+          <button
+            onClick={onDelete}
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-red-400 hover:bg-red-400/10 transition-colors"
+            aria-label={`${track.title} 삭제`}
+          >
+            <Trash2 size={15} />
+          </button>
+        )}
 
         {/* Expand/collapse triangle */}
         <button
