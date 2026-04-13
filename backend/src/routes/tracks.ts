@@ -24,7 +24,7 @@ router.get('/', async (_req, res) => {
       uploadedAt: row.uploaded_at,
       audioUrl: row.audio_url,
       coverUrl: row.cover_url,
-      members: row.members,
+      members: typeof row.members === 'string' ? JSON.parse(row.members) : (row.members ?? []),
       playCount: row.play_count,
     }));
     res.json(tracks);
