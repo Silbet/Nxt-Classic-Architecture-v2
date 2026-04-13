@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "package:metadata": "npm run build && cd dist && cp -r ../node_modules . && zip -r ../fetchMetadata.zip fetchMetadata.js node_modules",
+    "package:duration": "npm run build && cd dist && cp -r ../node_modules . && zip -r ../extractDuration.zip extractDuration.js node_modules"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.0.0",

@@ -6,7 +6,7 @@
  */
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { parseBuffer } from 'music-metadata';
-import type { S3Event } from 'aws-lambda';
+import type { SNSEvent } from 'aws-lambda';
 
 const s3 = new S3Client({ region: process.env.AWS_REGION ?? 'ap-northeast-2' });
 const BUCKET = process.env.AWS_S3_BUCKET ?? '';
@@ -38,9 +38,14 @@ async function patchTrack(trackId: string, duration: number) {
   if (!res.ok) throw new Error(`PATCH 실패: ${res.status}`);
 }
 
-export async function handler(event: S3Event): Promise<void> {
+export async function handler(event: SNSEvent): Promise<void> {
   for (const record of event.Records) {
-    const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, ' '));
+    // SNS 메시지 안에 S3 이벤트 JSON이 문자열로 들어있음
+    const s3Event = JSON.parse(record.Sns.Message);
+    const s3Record = s3Event.Records?.[0];
+    if (!s3Record) continue;
+
+    const key = decodeURIComponent(s3Record.s3.object.key.replace(/\+/g, ' '));
 
     const match = key.match(/^audio\/([^/]+)\.mp3$/);
     if (!match) {

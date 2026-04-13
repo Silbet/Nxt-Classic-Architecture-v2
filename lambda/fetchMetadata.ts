@@ -4,7 +4,7 @@
  * 트리거: S3 audio/ 경로에 mp3 업로드 시
  * 흐름: trackId 추출 → GET /api/tracks/:id → iTunes 검색 → PATCH /api/tracks/:id
  */
-import type { S3Event } from 'aws-lambda';
+import type { SNSEvent } from 'aws-lambda';
 
 const API_URL = process.env.API_URL ?? '';
 
@@ -55,9 +55,14 @@ async function patchTrack(trackId: string, payload: { artist: string; album: str
   if (!res.ok) throw new Error(`PATCH 실패: ${res.status}`);
 }
 
-export async function handler(event: S3Event): Promise<void> {
+export async function handler(event: SNSEvent): Promise<void> {
   for (const record of event.Records) {
-    const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, ' '));
+    // SNS 메시지 안에 S3 이벤트 JSON이 문자열로 들어있음
+    const s3Event = JSON.parse(record.Sns.Message);
+    const s3Record = s3Event.Records?.[0];
+    if (!s3Record) continue;
+
+    const key = decodeURIComponent(s3Record.s3.object.key.replace(/\+/g, ' '));
 
     const match = key.match(/^audio\/([^/]+)\.mp3$/);
     if (!match) {
