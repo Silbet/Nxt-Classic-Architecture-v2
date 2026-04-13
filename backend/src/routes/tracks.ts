@@ -2,7 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { pool } from '../db';
-import { uploadToS3 } from '../s3';
+import { uploadToS3, deleteFromS3 } from '../s3';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -136,6 +136,33 @@ router.patch('/:id', async (req, res) => {
   } catch (err) {
     console.error('트랙 업데이트 실패:', err);
     res.status(500).json({ error: '트랙 업데이트 실패' });
+  }
+});
+
+// DELETE /api/tracks/:id
+router.delete('/:id', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT audio_url, cover_url FROM tracks WHERE id = ?', [req.params.id]);
+    const row = (rows as any[])[0];
+    if (!row) {
+      res.status(404).json({ error: '트랙을 찾을 수 없습니다.' });
+      return;
+    }
+
+    // S3 파일 삭제 (audio, cover)
+    const audioKey = `audio/${req.params.id}.mp3`;
+    await deleteFromS3(audioKey);
+
+    if (row.cover_url) {
+      const coverKey = row.cover_url.split('.amazonaws.com/')[1];
+      if (coverKey) await deleteFromS3(coverKey);
+    }
+
+    await pool.query('DELETE FROM tracks WHERE id = ?', [req.params.id]);
+    res.sendStatus(204);
+  } catch (err) {
+    console.error('트랙 삭제 실패:', err);
+    res.status(500).json({ error: '트랙 삭제에 실패했습니다.' });
   }
 });
 
