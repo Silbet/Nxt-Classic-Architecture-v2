@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { PlayerProvider, usePlayer } from './context/PlayerContext';
 import FixedPlayer from './components/FixedPlayer';
 import TrackList from './components/TrackList';
-import { fetchTracks } from './lib/supabase';
+import { fetchTracks } from './lib/api';
 
 function AppContent() {
   const { dispatch } = usePlayer();

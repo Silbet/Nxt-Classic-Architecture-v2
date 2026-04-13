@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import type { PlayerState, PlayerAction } from '../types';
 import { playerReducer, initialState } from './playerReducer';
-import { incrementPlayCount } from '../lib/supabase';
+import { incrementPlayCount } from '../lib/api';
 
 interface PlayerContextValue {
   state: PlayerState;

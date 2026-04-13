@@ -50,36 +50,3 @@ export type PlayerAction =
   | { type: 'SET_AUDIO_ERROR'; payload: string }
   | { type: 'INCREMENT_PLAY_COUNT'; payload: string };
 
-// --- Supabase DB Response Type ---
-
-export interface SupabaseTrackRow {
-  id: string;
-  title: string;
-  artist: string;
-  album: string;
-  duration: number;
-  recorded_at: string;
-  uploaded_at: string;
-  audio_url: string;
-  cover_url: string | null;
-  members: Member[];
-  play_count: number;
-}
-
-// --- Mapping Function ---
-
-export function mapSupabaseTrack(row: SupabaseTrackRow): Track {
-  return {
-    id: row.id,
-    title: row.title,
-    artist: row.artist,
-    album: row.album,
-    duration: row.duration,
-    recordedAt: row.recorded_at,
-    uploadedAt: row.uploaded_at,
-    audioUrl: row.audio_url,
-    coverUrl: row.cover_url,
-    members: row.members,
-    playCount: row.play_count,
-  };
-}
