@@ -20,3 +20,6 @@ tsconfig.tsbuildinfo
 # OS
 .DS_Store
 Thumbs.db
+
+# playwright snapshots
+.playwright-mcp/
