@@ -42,7 +42,10 @@ export function playerReducer(state: PlayerState, action: PlayerAction): PlayerS
     case 'LOAD_TRACKS': {
       const tracks = action.payload;
       const queue = sortTracks(tracks, state.sortOrder);
-      return { ...state, tracks, queue, isLoading: false, error: null };
+      // 현재 재생 중인 트랙을 id 기준으로 새 queue에서 다시 찾아 인덱스 복원
+      const currentTrack = state.currentIndex >= 0 ? state.queue[state.currentIndex] : undefined;
+      const newIndex = currentTrack ? queue.findIndex((t) => t.id === currentTrack.id) : -1;
+      return { ...state, tracks, queue, currentIndex: newIndex, isLoading: false, error: null };
     }
 
     case 'SELECT_TRACK': {
