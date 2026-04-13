@@ -34,6 +34,34 @@ router.get('/', async (_req, res) => {
   }
 });
 
+// GET /api/tracks/:id
+router.get('/:id', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM tracks WHERE id = ?', [req.params.id]);
+    const row = (rows as any[])[0];
+    if (!row) {
+      res.status(404).json({ error: '트랙을 찾을 수 없습니다.' });
+      return;
+    }
+    res.json({
+      id: row.id,
+      title: row.title,
+      artist: row.artist,
+      album: row.album,
+      duration: row.duration,
+      recordedAt: row.recorded_at,
+      uploadedAt: row.uploaded_at,
+      audioUrl: row.audio_url,
+      coverUrl: row.cover_url,
+      members: typeof row.members === 'string' ? JSON.parse(row.members) : (row.members ?? []),
+      playCount: row.play_count,
+    });
+  } catch (err) {
+    console.error('트랙 조회 실패:', err);
+    res.status(500).json({ error: '트랙 조회 실패' });
+  }
+});
+
 // POST /api/tracks
 router.post(
   '/',
@@ -86,19 +114,21 @@ router.post(
   }
 );
 
-// PATCH /api/tracks/:id — Lambda가 앨범명/커버 이미지 업데이트할 때 사용
+// PATCH /api/tracks/:id — Lambda가 앨범명/커버/duration 업데이트할 때 사용
 router.patch('/:id', async (req, res) => {
   try {
-    const { album, coverUrl } = req.body;
-    if (!album && !coverUrl) {
+    const { album, coverUrl, duration, artist } = req.body;
+    if (!album && !coverUrl && duration == null && !artist) {
       res.status(400).json({ error: '업데이트할 항목이 없습니다.' });
       return;
     }
 
     const fields: string[] = [];
     const values: any[] = [];
-    if (album)    { fields.push('album = ?');     values.push(album); }
-    if (coverUrl) { fields.push('cover_url = ?'); values.push(coverUrl); }
+    if (artist)         { fields.push('artist = ?');    values.push(artist); }
+    if (album)          { fields.push('album = ?');     values.push(album); }
+    if (coverUrl)       { fields.push('cover_url = ?'); values.push(coverUrl); }
+    if (duration != null) { fields.push('duration = ?');  values.push(duration); }
     values.push(req.params.id);
 
     await pool.query(`UPDATE tracks SET ${fields.join(', ')} WHERE id = ?`, values);
