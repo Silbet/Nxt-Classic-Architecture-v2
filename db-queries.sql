@@ -23,19 +23,19 @@ CREATE TABLE IF NOT EXISTS tracks (
 
 
 -- =============================================
--- 곡 추가 템플릿
+-- 곡 추가 템플릿 (주석 처리 - 실행 시 제외)
 -- =============================================
-INSERT INTO tracks (title, artist, album, duration, recorded_at, audio_url, cover_url, members)
-VALUES (
-  '곡 제목',
-  '원곡 아티스트',
-  '앨범명',
-  0,
-  'YYYY-MM-DD',
-  'https://your-s3-bucket.s3.ap-northeast-2.amazonaws.com/audio/파일명.mp3',
-  NULL,
-  '[{"name": "이름", "part": "파트"}]'
-);
+-- INSERT INTO tracks (title, artist, album, duration, recorded_at, audio_url, cover_url, members)
+-- VALUES (
+--   '곡 제목',
+--   '원곡 아티스트',
+--   '앨범명',
+--   0,
+--   'YYYY-MM-DD',
+--   'https://your-s3-bucket.s3.ap-northeast-2.amazonaws.com/audio/파일명.mp3',
+--   NULL,
+--   '[{"name": "이름", "part": "파트"}]'
+-- );
 
 
 -- =============================================
